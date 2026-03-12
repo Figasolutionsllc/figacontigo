@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FIGA">
+<meta name="theme-color" content="#0B1121">
+<title>FIGA Consulting</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+--bg:#0B1121;--bg2:#111827;--bg3:#1F2937;--bg4:#374151;
+--pri:#2E7BF6;--pri-l:#60A5FA;--pri-d:#1D4FD7;--pri-bg:rgba(46,123,246,0.15);
+--text:#F9FAFB;--text2:#D1D5DB;--text3:#9CA3AF;--text4:#6B7280;
+--green:#10B981;--green-bg:rgba(16,185,129,0.15);
+--yellow:#F59E0B;--yellow-bg:rgba(245,158,11,0.15);
+--red:#EF4444;--red-bg:rgba(239,68,68,0.15);
+--purple:#8B5CF6;--purple-bg:rgba(139,92,246,0.15);
+--orange:#F97316;--orange-bg:rgba(249,115,22,0.15);
+--border:#1F2937;--border2:#374151;
+--r:12px;--sh:0 2px 8px rgba(0,0,0,0.3);
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
+input,select,textarea,button{font-family:'Inter',sans-serif}
+
+.login-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;background:radial-gradient(ellipse at 50% 30%,rgba(46,123,246,0.08),transparent 70%)}
+.login-logo{width:220px;margin-bottom:40px;filter:drop-shadow(0 4px 20px rgba(46,123,246,0.2))}
+.login-cards{display:flex;gap:20px;flex-wrap:wrap;justify-content:center}
+.login-card{background:var(--bg2);border:1px solid var(--border2);border-radius:16px;padding:32px 28px;width:260px;text-align:center;cursor:pointer;transition:all .3s}
+.login-card:hover{border-color:var(--pri);transform:translateY(-4px);box-shadow:0 8px 30px rgba(46,123,246,0.15)}
+.login-card .icon{font-size:40px;margin-bottom:12px}
+.login-card h3{font-size:18px;font-weight:700;margin-bottom:6px}
+.login-card p{font-size:13px;color:var(--text3)}
+.login-pin{margin-top:24px;text-align:center;display:none}
+.login-pin.show{display:block}
+.login-pin input{background:var(--bg3);border:2px solid var(--border2);color:var(--text);padding:12px 16px;border-radius:10px;font-size:16px;width:200px;text-align:center;letter-spacing:8px;outline:0}
+.login-pin input:focus{border-color:var(--pri)}
+.login-pin button{margin-top:12px;display:block;margin-left:auto;margin-right:auto}
+
+.app-layout{display:flex;min-height:100vh}
+.sidebar{width:240px;min-height:100vh;background:var(--bg2);border-right:1px solid var(--border);padding:20px 12px;display:flex;flex-direction:column;gap:4px;position:fixed;left:0;top:0;z-index:100;overflow-y:auto}
+.sidebar-logo{width:140px;margin:0 auto 20px;display:block}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border:0;border-radius:10px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text3);background:0;transition:all .2s;width:100%;text-align:left}
+.nav-item:hover{color:var(--text);background:var(--bg3)}
+.nav-item.active{background:var(--pri-bg);color:var(--pri-l)}
+.nav-item .ni{font-size:16px;width:22px;text-align:center}
+.nav-alert{background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;margin-left:auto}
+.nav-sep{height:1px;background:var(--border);margin:12px 8px}
+.sidebar-footer{margin-top:auto;font-size:10px;color:var(--text4);text-align:center;padding:12px 0}
+
+.main{flex:1;margin-left:240px;padding:28px 32px;min-height:100vh}
+
+.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);padding:6px 0 env(safe-area-inset-bottom,8px);z-index:100;justify-content:space-around}
+.mobile-nav button{background:0;border:0;color:var(--text4);font-size:10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 8px;border-radius:8px;position:relative;font-family:'Inter',sans-serif}
+.mobile-nav button.active{color:var(--pri-l)}
+.mobile-nav button .mn{font-size:18px}
+.mobile-nav .m-dot{position:absolute;top:2px;right:6px;width:7px;height:7px;background:var(--red);border-radius:50%}
+
+/* WIZARD */
+.wizard{max-width:640px;margin:0 auto;padding:20px 0}
+.wizard-header{text-align:center;margin-bottom:32px}
+.wizard-logo{width:160px;margin-bottom:16px}
+.wizard-steps{display:flex;justify-content:center;gap:8px;margin-bottom:24px}
+.wizard-step{width:40px;height:4px;border-radius:2px;background:var(--bg4);transition:all .3s}
+.wizard-step.done{background:var(--green)}
+.wizard-step.current{background:var(--pri);width:60px}
+.wizard-title{font-size:22px;font-weight:700;margin-bottom:6px}
+.wizard-sub{color:var(--text3);font-size:14px}
+.wizard-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:20px}
+.wizard-notice{background:var(--yellow-bg);border:1px solid rgba(245,158,11,0.3);border-radius:10px;padding:14px 16px;margin-bottom:20px;font-size:13px;color:var(--yellow);display:flex;align-items:flex-start;gap:10px}
+.wizard-notice .wni{font-size:18px;flex-shrink:0}
+.wizard-actions{display:flex;gap:12px;justify-content:flex-end;margin-top:20px}
+.wizard-success{text-align:center;padding:60px 20px}
+.wizard-success .icon{font-size:60px;margin-bottom:16px}
+
+.page-title{font-size:24px;font-weight:800;color:var(--text)}
+.page-sub{color:var(--text3);font-size:13px;margin:4px 0 20px}
+.section-title{font-size:14px;font-weight:600;color:var(--text2);margin:20px 0 10px;display:flex;align-items:center;gap:8px}
+
+.fg{margin-bottom:14px}
+.fg label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:5px}
+.fg .req{color:var(--red)}
+.fg input,.fg select,.fg textarea{width:100%;padding:10px 14px;background:var(--bg3);border:1px solid var(--border2);color:var(--text);border-radius:8px;font-size:13px;outline:0;transition:border .2s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--pri)}
+.fg input::placeholder,.fg textarea::placeholder{color:var(--text4)}
+.fg textarea{min-height:70px;resize:vertical}
+.fg select option{background:var(--bg3);color:var(--text)}
+.fg-row{display:flex;gap:12px}
+.fg-row .fg{flex:1}
+.fg .check-row{display:flex;align-items:center;gap:8px;padding:6px 0}
+.fg .check-row input[type=checkbox]{width:18px;height:18px;accent-color:var(--pri)}
+.fg .check-row label{font-size:13px;margin:0;color:var(--text2)}
+
+.btn{padding:10px 20px;border-radius:10px;font-weight:600;font-size:13px;cursor:pointer;border:0;transition:all .2s;white-space:nowrap}
+.btn-p{background:var(--pri);color:#fff}.btn-p:hover{background:var(--pri-d)}.btn-p:disabled{opacity:.4;cursor:not-allowed}
+.btn-s{background:var(--bg3);color:var(--text2);border:1px solid var(--border2)}.btn-s:hover{border-color:var(--pri);color:var(--text)}
+.btn-d{background:var(--red-bg);color:var(--red);border:1px solid rgba(239,68,68,0.2)}
+.btn-sm{padding:6px 14px;font-size:12px;border-radius:8px}
+.btn-back{background:0;border:0;color:var(--pri-l);font-weight:600;font-size:13px;cursor:pointer;padding:0 0 16px}
+.btn-del{background:0;border:0;cursor:pointer;font-size:13px;opacity:.4;transition:opacity .2s}.btn-del:hover{opacity:1}
+
+.top-bar{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:24px}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:16px;display:flex;align-items:center;gap:12px}
+.stat-card .icon{font-size:22px}
+.stat-val{font-size:20px;font-weight:700}
+.stat-lbl{font-size:11px;color:var(--text3);margin-top:2px}
+
+.alert-banner{background:var(--red-bg);border:1px solid rgba(239,68,68,0.2);border-radius:var(--r);padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:12px}
+.alert-banner .icon{font-size:22px}
+.alert-banner .count{font-weight:700;font-size:18px;color:var(--red)}
+.alert-banner .text{font-size:13px;color:var(--red)}
+.alert-banner.warn{background:var(--yellow-bg);border-color:rgba(245,158,11,0.2)}
+.alert-banner.warn .count{color:var(--yellow)}
+.alert-banner.warn .text{color:var(--yellow)}
+
+.search-input{width:100%;padding:10px 16px;background:var(--bg2);border:1px solid var(--border2);color:var(--text);border-radius:10px;font-size:13px;outline:0;margin-bottom:14px}
+.search-input:focus{border-color:var(--pri)}.search-input::placeholder{color:var(--text4)}
+
+.client-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px 18px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s;margin-bottom:8px}
+.client-card:hover{border-color:var(--pri);background:rgba(46,123,246,0.04)}
+.avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--pri-d),var(--pri-l));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;flex-shrink:0}
+.avatar.lg{width:50px;height:50px;font-size:20px}
+.c-name{font-weight:600;font-size:14px}
+.c-info{font-size:12px;color:var(--text3);margin-top:2px}
+.c-source{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;background:var(--purple-bg);color:var(--purple);margin-left:6px}
+
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-overdue{animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:18px;overflow-x:auto}
+.tab{padding:10px 16px;border:0;background:0;cursor:pointer;font-size:12px;font-weight:600;color:var(--text4);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;white-space:nowrap;font-family:'Inter',sans-serif}
+.tab.active{color:var(--pri-l);border-bottom-color:var(--pri)}
+
+.cred-group{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:10px}
+.cred-title{font-size:13px;font-weight:600;color:var(--text2);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.cred-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.cred-item{flex:1;min-width:160px}
+.cred-label{font-size:11px;color:var(--text4);margin-bottom:3px}
+.cred-value{font-size:13px;font-weight:500;padding:7px 10px;background:var(--bg3);border-radius:6px;display:flex;align-items:center;justify-content:space-between;word-break:break-all;color:var(--text)}
+.cred-value .toggle{cursor:pointer;font-size:12px;color:var(--text4);flex-shrink:0;margin-left:8px}
+
+.table-wrap{overflow-x:auto;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r)}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;padding:10px 14px;font-size:11px;font-weight:600;color:var(--text4);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:10px 14px;font-size:13px;border-bottom:1px solid var(--border);color:var(--text2)}
+tr:hover td{background:rgba(255,255,255,0.02)}
+tr.overdue td{background:var(--red-bg)}
+.status-sel{background:var(--bg3);border:1px solid var(--border2);color:var(--text);cursor:pointer;padding:4px 8px;border-radius:6px;font-size:11px;font-weight:600;font-family:'Inter',sans-serif}
+
+.bureau-tabs{display:flex;gap:0;margin-bottom:14px}
+.bureau-tab{padding:8px 16px;border:0;border-radius:8px 8px 0 0;cursor:pointer;font-size:12px;font-weight:600;background:var(--bg3);color:var(--text4);transition:all .2s;font-family:'Inter',sans-serif}
+.bureau-tab.active-eq{background:#DC2626;color:#fff}
+.bureau-tab.active-ex{background:#2563EB;color:#fff}
+.bureau-tab.active-tu{background:#059669;color:#fff}
+
+.acct-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:8px;border-left:3px solid var(--border2)}
+.acct-card.eliminated{border-left-color:var(--green);opacity:.65}
+.acct-card.in_dispute{border-left-color:var(--yellow)}
+.acct-card.active{border-left-color:var(--red)}
+
+.note-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:8px;border-left:3px solid var(--pri)}
+
+.voice-btn{width:52px;height:52px;border-radius:50%;background:var(--pri);color:#fff;border:0;font-size:22px;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;justify-content:center;vertical-align:middle}
+.voice-btn:hover{background:var(--pri-d)}
+.voice-btn.recording{background:var(--red);animation:voicePulse 1s infinite}
+@keyframes voicePulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.4)}50%{box-shadow:0 0 0 14px rgba(239,68,68,0)}}
+
+.floating-mic{position:fixed;bottom:100px;right:24px;z-index:90;display:flex;flex-direction:column;align-items:center;gap:6px}
+.floating-mic .voice-btn{width:70px;height:70px;font-size:30px;box-shadow:0 4px 24px rgba(46,123,246,0.5)}
+.floating-mic .mic-label{font-size:11px;font-weight:600;color:var(--text);background:var(--bg2);padding:4px 10px;border-radius:6px;border:1px solid var(--border2);white-space:nowrap}
+
+.quick-notes{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-top:20px}
+.quick-notes-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.quick-note-input{display:flex;gap:8px;margin-bottom:14px}
+.quick-note-input textarea{flex:1;padding:10px;background:var(--bg3);border:1px solid var(--border2);color:var(--text);border-radius:8px;font-size:13px;outline:0;min-height:50px;resize:none;font-family:'Inter',sans-serif}
+.quick-note-input textarea::placeholder{color:var(--text4)}
+.quick-note-input textarea:focus{border-color:var(--pri)}
+.quick-note-input button{align-self:flex-end}
+
+.upload-zone{border:2px dashed var(--border2);border-radius:var(--r);padding:24px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:12px}
+.upload-zone:hover{border-color:var(--pri);background:var(--pri-bg)}
+.upload-zone .uzi{font-size:28px}
+.upload-zone p{color:var(--text3);font-size:12px;margin-top:6px}
+.upload-zone.has-file{border-color:var(--green);border-style:solid;background:var(--green-bg)}
+.upload-zone.has-file p{color:var(--green)}
+
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:1000;padding:16px}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:540px;max-height:88vh;overflow-y:auto;padding:24px}
+.modal-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.modal-t{font-size:17px;font-weight:700}
+.close-btn{background:var(--bg4);border:0;border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:var(--text)}
+
+.empty{text-align:center;padding:40px 20px;color:var(--text4)}
+.empty .icon{font-size:36px;display:block;margin-bottom:8px}
+
+.toast{position:fixed;bottom:80px;right:20px;background:var(--pri);color:#fff;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:600;z-index:2000;box-shadow:0 8px 24px rgba(46,123,246,.3);animation:slideIn .3s ease;display:none}
+@keyframes slideIn{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+.referral-link{display:inline-flex;align-items:center;gap:6px;background:var(--pri-bg);color:var(--pri-l);padding:10px 16px;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;border:1px solid rgba(46,123,246,0.2)}
+.referral-link:hover{background:var(--pri);color:#fff}
+
+.source-filter{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.source-chip{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;background:var(--bg3);color:var(--text3);border:1px solid var(--border2);transition:all .2s}
+.source-chip.active{background:var(--pri-bg);color:var(--pri-l);border-color:var(--pri)}
+
+.doc-preview{width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid var(--border2)}
+
+@media(max-width:768px){
+.sidebar{display:none}.mobile-nav{display:flex}
+.main{margin-left:0;padding:16px 14px 100px}
+.page-title{font-size:20px}.stats-grid{grid-template-columns:repeat(2,1fr);gap:8px}
+.modal{max-width:100%;margin:8px;padding:18px}
+.fg-row{flex-direction:column;gap:0}.cred-row{flex-direction:column;gap:4px}
+.toast{bottom:90px;right:14px;left:14px;text-align:center}
+.login-logo{width:160px}.login-card{width:100%;max-width:280px;padding:24px}
+th,td{padding:8px 10px;font-size:12px}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<input type="file" id="fileInput" accept="image/*,.pdf" style="display:none">
+<script>
+const LOGO_B64='data:image/jpeg;base64,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33pGLn8TmmUUV8u227s+lSsrIKKKKQwooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD/2Q==';
+
+const SK="figa_v3";
+function getPIN(){try{return localStorage.getItem("figa_pin")||"1234"}catch(e){return"1234"}}
+function setPIN(p){try{localStorage.setItem("figa_pin",p)}catch(e){}}
+function changePin(){
+  const current=prompt("PIN actual:");
+  if(current!==getPIN())return toast("PIN incorrecto");
+  const newPin=prompt("Nuevo PIN (4 dígitos):");
+  if(!newPin||newPin.length<4)return toast("PIN inválido");
+  setPIN(newPin);toast("PIN cambiado exitosamente");
+}
+const STATUSES=[
+{v:"pendiente",l:"Pendiente",c:"#F59E0B",bg:"rgba(245,158,11,0.15)"},
+{v:"enviada",l:"Enviada",c:"#3B82F6",bg:"rgba(59,130,246,0.15)"},
+{v:"en_proceso",l:"En Proceso",c:"#8B5CF6",bg:"rgba(139,92,246,0.15)"},
+{v:"respondida",l:"Respondida",c:"#F97316",bg:"rgba(249,115,22,0.15)"},
+{v:"resuelta",l:"Resuelta",c:"#10B981",bg:"rgba(16,185,129,0.15)"},
+{v:"rechazada",l:"Rechazada",c:"#EF4444",bg:"rgba(239,68,68,0.15)"},
+];
+const OSCAR_CODES=[
+{code:"001",desc:"Not his/hers"},
+{code:"002",desc:"Belongs to another individual with same/similar name"},
+{code:"006",desc:"Not aware of collection"},
+{code:"008",desc:"Late due to change of address, never received statement"},
+{code:"010",desc:"Settlement or partial payments accepted"},
+{code:"012",desc:"Paid original creditor before collection/charge-off"},
+{code:"014",desc:"Claims paid before collection status"},
+{code:"019",desc:"Included in bankruptcy of another person"},
+{code:"023",desc:"Claims account closed"},
+{code:"024",desc:"Claims account closed by consumer"},
+{code:"031",desc:"Contract canceled or rescinded"},
+{code:"037",desc:"Account included in bankruptcy"},
+{code:"038",desc:"Claims active military duty"},
+{code:"039",desc:"Insurance claim delayed"},
+{code:"040",desc:"Account involved in litigation"},
+{code:"041",desc:"Claims victim of natural/declared disaster"},
+{code:"100",desc:"Claims account deferred"},
+{code:"101",desc:"Not liable for account (ex-spouse, business, etc)"},
+{code:"102",desc:"Account reaffirmed/not included in bankruptcy"},
+{code:"103",desc:"True identity fraud/account fraudulently opened"},
+{code:"104",desc:"Account take-over, fraudulent charges"},
+{code:"105",desc:"Disputes Dates (Payment/Opened/Delinquency/Closed)"},
+{code:"106",desc:"Disputes Account Status/Payment History/Rating"},
+{code:"107",desc:"Disputes Special Comment/Compliance Code"},
+{code:"108",desc:"Disputes Account Type/Terms/Portfolio Type"},
+{code:"109",desc:"Dispute current balance"},
+{code:"110",desc:"Claims company will change"},
+{code:"111",desc:"Claims company will delete"},
+{code:"112",desc:"Claims inaccurate information"}
+];
+const METHODS=["609 Letter","611 Letter","623 Direct Dispute","Validación de Deuda","Cease & Desist","Goodwill Letter","Pay for Delete","Metro2/e-OSCAR","ChexSystems Dispute","Early Warning Dispute","Otro"];
+const DISPUTE_TARGETS=["Equifax","Experian","TransUnion","ChexSystems","Early Warning","Todos"];
+const MONITORS=["SmartCredit","IdentityIQ","MyScoreIQ","MyFreeScoreNow"];
+const ACCT_TYPES=["Late Payment","Charge-off","Collection","Settled","Inquiry","Info Personal","Otro"];
+const US_STATES=["AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY","DC","PR"];
+const US_STATE_NAMES={"AL":"Alabama","AK":"Alaska","AZ":"Arizona","AR":"Arkansas","CA":"California","CO":"Colorado","CT":"Connecticut","DE":"Delaware","FL":"Florida","GA":"Georgia","HI":"Hawaii","ID":"Idaho","IL":"Illinois","IN":"Indiana","IA":"Iowa","KS":"Kansas","KY":"Kentucky","LA":"Louisiana","ME":"Maine","MD":"Maryland","MA":"Massachusetts","MI":"Michigan","MN":"Minnesota","MS":"Mississippi","MO":"Missouri","MT":"Montana","NE":"Nebraska","NV":"Nevada","NH":"New Hampshire","NJ":"New Jersey","NM":"New Mexico","NY":"New York","NC":"North Carolina","ND":"North Dakota","OH":"Ohio","OK":"Oklahoma","OR":"Oregon","PA":"Pennsylvania","RI":"Rhode Island","SC":"South Carolina","SD":"South Dakota","TN":"Tennessee","TX":"Texas","UT":"Utah","VT":"Vermont","VA":"Virginia","WA":"Washington","WV":"West Virginia","WI":"Wisconsin","WY":"Wyoming","DC":"Washington DC","PR":"Puerto Rico"};
+let wizardSsnVisible=false;
+function toggleWizardSsn(){wizardSsnVisible=!wizardSsnVisible;render()}
+const ACCT_ST=[
+{v:"active",l:"Activa",c:"#EF4444",bg:"rgba(239,68,68,0.15)"},
+{v:"in_dispute",l:"En Disputa",c:"#F59E0B",bg:"rgba(245,158,11,0.15)"},
+{v:"eliminated",l:"Eliminada",c:"#10B981",bg:"rgba(16,185,129,0.15)"},
+];
+
+let S={
+  role:null,view:"dashboard",client:null,modal:null,form:{},search:"",tab:"info",bureauTab:"equifax",
+  sourceFilter:"all",wizardStep:0,wizardData:{},
+  data:{clients:[],accounts:[],disputes:[],notes:[],sources:["FIGA Directo"]}
+};
+
+const gid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const fD=d=>d?new Date(d).toLocaleDateString("es-MX",{day:"2-digit",month:"short",year:"numeric"}):"";
+const esc=s=>s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'):'';
+const gS=v=>STATUSES.find(s=>s.v===v)||STATUSES[0];
+const gAS=v=>ACCT_ST.find(s=>s.v===v)||ACCT_ST[0];
+
+function load(){try{const r=localStorage.getItem(SK);if(r){const d=JSON.parse(r);S.data={...S.data,...d};if(!S.data.sources)S.data.sources=["FIGA Directo"]}}catch(e){}}
+function save(){try{localStorage.setItem(SK,JSON.stringify(S.data))}catch(e){}}
+
+let toastT;
+function toast(m){clearTimeout(toastT);const e=document.getElementById("toast");if(e){e.textContent="✓ "+m;e.style.display="block";toastT=setTimeout(()=>{e.style.display="none"},2500)}}
+
+function daysUntil(d){
+  if(!d.sentDate||d.status==="resuelta"||d.status==="rechazada")return null;
+  const days=d.type==="metro2"?16:30;
+  const next=new Date(d.sentDate);next.setDate(next.getDate()+days);
+  return Math.ceil((next-new Date())/(864e5));
+}
+function getOverdue(){return S.data.disputes.filter(d=>{const r=daysUntil(d);return r!==null&&r<=0})}
+function getUpcoming(){return S.data.disputes.filter(d=>{const r=daysUntil(d);return r!==null&&r>0&&r<=2})}
+
+function setRole(r){S.role=r;if(r==="client"){S.wizardStep=0;S.wizardData={}}render()}
+function setView(v){S.view=v;S.client=null;S.search="";S.tab="info";S.bureauTab="equifax";render()}
+function selectClient(id){S.client=S.data.clients.find(c=>c.id===id);S.view="detail";S.tab="info";render()}
+function setTab(t){S.tab=t;render()}
+function setBureauTab(b){S.bureauTab=b;render()}
+function openModal(t,pf={}){S.modal=t;S.form={...pf};render()}
+function closeModal(){document.querySelectorAll('.overlay').forEach(el=>el.remove());S.modal=null;S.form={};render()}
+function setF(f,v){S.form[f]=v}
+function logout(){S.role=null;render()}
+function setSourceFilter(sf){S.sourceFilter=sf;render()}
+
+// SOURCES MANAGEMENT
+function addSource(){
+  const name=prompt("Nombre de la empresa/persona:");
+  if(name&&name.trim()){
+    if(!S.data.sources.includes(name.trim())){
+      S.data.sources.push(name.trim());save();toast("Fuente agregada");render();
+    }
+  }
+}
+function removeSource(name){
+  if(name==="FIGA Directo")return toast("No se puede eliminar");
+  if(!confirm("¿Eliminar '"+name+"'?"))return;
+  S.data.sources=S.data.sources.filter(s=>s!==name);save();toast("Eliminada");render();
+}
+
+
+// API KEY MANAGEMENT
+function getApiKey(){try{return localStorage.getItem("figa_api_key")||""}catch(e){return""}}
+function setApiKey(k){try{localStorage.setItem("figa_api_key",k)}catch(e){}}
+function promptApiKey(){
+  const current=getApiKey();
+  const key=prompt("Pega tu API Key de Anthropic (console.anthropic.com):\n\nActual: "+(current?current.substring(0,12)+"...":"No configurada"));
+  if(key!==null){setApiKey(key.trim());toast(key.trim()?"API Key guardada":"API Key eliminada")}
+}
+
+// BACKUP FUNCTIONS  
+function exportBackup(){
+  const data=JSON.stringify(S.data,null,2);
+  const blob=new Blob([data],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download="FIGA_Backup_"+new Date().toISOString().split("T")[0]+".json";
+  a.click();URL.revokeObjectURL(url);
+  toast("Backup descargado");
+}
+function importBackup(){
+  const inp=document.createElement("input");inp.type="file";inp.accept=".json";
+  inp.onchange=e=>{
+    const file=e.target.files[0];if(!file)return;
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      try{
+        const imported=JSON.parse(ev.target.result);
+        if(imported.clients){
+          if(confirm("Esto reemplazará TODOS tus datos actuales con el backup. ¿Continuar?")){
+            S.data=imported;save();toast("Backup restaurado: "+imported.clients.length+" clientes");render();
+          }
+        }else{toast("Archivo no válido")}
+      }catch(err){toast("Error leyendo archivo")}
+    };reader.readAsText(file);
+  };inp.click();
+}
+
+// WIZARD
+function wizardNext(){
+  const step=S.wizardStep;const f=S.wizardData;
+  if(step===0&&(!f.firstName||!f.lastName||!f.ssn||!f.phone||!f.address||!f.state))return toast("Completa todos los campos obligatorios (*)");
+  if(step===3){
+    const client={id:gid(),...f,source:"FIGA Directo",createdAt:new Date().toISOString(),docs:f.docs||{}};
+    S.data.clients.push(client);save();
+    try{const s=encodeURIComponent("Nuevo Cliente - FIGA");const b=encodeURIComponent("Nuevo cliente: "+f.firstName+" "+f.lastName+"\nTel: "+(f.phone||"N/A")+"\nEmail: "+(f.personalEmail||"N/A")+"\nServicio: "+(f.serviceType==="funding"?"Funding":"Crédito"));
+    window.open("mailto:info@figasolutions.com,figasolutionsllc@gmail.com?subject="+s+"&body="+b)}catch(e){}
+  }
+  S.wizardStep++;render();
+}
+function wizardBack(){if(S.wizardStep>0){S.wizardStep--;render()}else{S.wizardData={};render()}}
+function wizardGoHome(){S.role=null;S.wizardStep=0;S.wizardData={};render()}
+function setW(f,v){S.wizardData[f]=v}
+
+// CRUD
+function addClient(){
+  const f=S.form;if(!f.firstName||!f.lastName)return;
+  S.data.clients.push({id:gid(),...f,source:f.source||"FIGA Directo",createdAt:new Date().toISOString()});
+  save();closeModal();toast("Cliente creado");
+}
+function updateClient(){
+  const f=S.form;const c=S.data.clients.find(x=>x.id===f.id);
+  if(c)Object.assign(c,f);S.client=c;save();closeModal();toast("Actualizado");
+}
+function deleteClient(id){
+  if(!confirm("¿Eliminar cliente y todos sus registros?"))return;
+  S.data.clients=S.data.clients.filter(c=>c.id!==id);
+  S.data.accounts=S.data.accounts.filter(a=>a.clientId!==id);
+  S.data.disputes=S.data.disputes.filter(d=>d.clientId!==id);
+  S.data.notes=S.data.notes.filter(n=>n.clientId!==id);
+  S.client=null;S.view="clients";save();toast("Eliminado");render();
+}
+function addAccount(){
+  const f=S.form;if(!f.creditorName)return;
+  S.data.accounts.push({id:gid(),...f,status:f.status||"active",createdAt:new Date().toISOString()});
+  save();closeModal();toast("Cuenta agregada");
+}
+function updateAcctStatus(id,st){
+  const a=S.data.accounts.find(x=>x.id===id);if(a){a.status=st;a.updatedAt=new Date().toISOString()}save();toast("Actualizado");render();
+}
+function deleteAcct(id){S.data.accounts=S.data.accounts.filter(a=>a.id!==id);save();toast("Eliminada");render()}
+function addDispute(){
+  const f=S.form;
+  if(!f.oscarCode)return toast("⚠ Debes seleccionar un código e-OSCAR");
+  const sent=f.sentDate||new Date().toISOString().split('T')[0];
+  const days=f.type==="metro2"?16:30;const next=new Date(sent);next.setDate(next.getDate()+days);
+  S.data.disputes.push({id:gid(),...f,sentDate:sent,nextDate:next.toISOString().split('T')[0],
+    usedCFPB:!!f.usedCFPB,reportedFTC:!!f.reportedFTC,status:f.status||"enviada",createdAt:new Date().toISOString()});
+  save();closeModal();toast("Disputa registrada");
+}
+function updateDisputeStatus(id,st){
+  const d=S.data.disputes.find(x=>x.id===id);if(d){d.status=st;d.updatedAt=new Date().toISOString()}save();toast("Actualizado");render();
+}
+function resendDispute(id){
+  const d=S.data.disputes.find(x=>x.id===id);if(!d)return;
+  d.round=(parseInt(d.round)||1)+1;d.sentDate=new Date().toISOString().split('T')[0];
+  const days=d.type==="metro2"?16:30;const next=new Date(d.sentDate);next.setDate(next.getDate()+days);
+  d.nextDate=next.toISOString().split('T')[0];d.status="enviada";save();toast("Ronda "+d.round);render();
+}
+function deleteDispute(id){S.data.disputes=S.data.disputes.filter(d=>d.id!==id);save();toast("Eliminada");render()}
+function addNote(){const f=S.form;if(!f.text)return;S.data.notes.push({id:gid(),...f,createdAt:new Date().toISOString()});save();closeModal();toast("Nota guardada")}
+function deleteNote(id){S.data.notes=S.data.notes.filter(n=>n.id!==id);save();toast("Eliminada");render()}
+
+// VOICE
+let recognition=null;let isRecording=false;let voiceClientId=null;
+function toggleVoice(clientId){
+  if(!('webkitSpeechRecognition' in window||'SpeechRecognition' in window)){toast("Tu navegador no soporta dictado por voz");return}
+  if(isRecording){recognition.stop();return}
+  voiceClientId=clientId;
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  recognition=new SR();recognition.lang='es-US';recognition.continuous=true;recognition.interimResults=true;
+  let finalText="";
+  recognition.onresult=e=>{
+    let interim="";
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      if(e.results[i].isFinal)finalText+=e.results[i][0].transcript+" ";
+      else interim+=e.results[i][0].transcript;
+    }
+    const el=document.getElementById("voiceOutput");
+    if(el)el.textContent=finalText+interim;
+  };
+  recognition.onend=()=>{
+    isRecording=false;
+    if(finalText.trim()){
+      S.data.notes.push({id:gid(),clientId:voiceClientId,title:"🎙 Nota de Voz",text:finalText.trim(),createdAt:new Date().toISOString()});
+      save();toast("Nota de voz guardada");
+    }
+    render();
+  };
+  recognition.onerror=()=>{isRecording=false;render()};
+  recognition.start();isRecording=true;render();
+}
+
+const shown=new Set();
+function togglePwd(k){if(shown.has(k))shown.delete(k);else shown.add(k);render()}
+function pwd(val,k){if(!val)return"—";return shown.has(k)?esc(val):"••••••••"}
+
+// AI ANALYSIS UPLOAD
+S.aiProcessing=false;
+
+// DISPUTE LETTER UPLOAD + AI CODE DETECTION
+function uploadDisputeLetter(){
+  const inp=document.createElement('input');inp.type='file';inp.accept='image/*,.pdf';
+  inp.onchange=async e=>{
+    const file=e.target.files[0];if(!file)return;
+    const reader=new FileReader();
+    reader.onload=async ev=>{
+      // Compress if image
+      const base64Full=ev.target.result;
+      S.form.letterFile=base64Full;
+      S.form.letterFileName=file.name;
+      render();
+      // Try to detect e-OSCAR code via AI
+      try{
+        const b64=base64Full.split(",")[1];
+        const mediaType=file.type.includes("pdf")?"application/pdf":file.type||"image/jpeg";
+        const contentBlock=file.type.includes("pdf")?
+          {type:"document",source:{type:"base64",media_type:mediaType,data:b64}}:
+          {type:"image",source:{type:"base64",media_type:mediaType,data:b64}};
+        if(!getApiKey()){toast("Configura tu API Key para detección automática");S.aiProcessing=false;render();return;}
+        toast("Analizando carta para detectar código e-OSCAR...");
+        const resp=await fetch("https://api.anthropic.com/v1/messages",{
+          method:"POST",headers:{"Content-Type":"application/json","x-api-key":getApiKey(),"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+          body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:200,
+            messages:[{role:"user",content:[contentBlock,
+              {type:"text",text:`This is a credit dispute letter. Identify the e-OSCAR reason code used. Valid codes: 001,002,006,008,010,012,014,019,023,024,031,037,038,039,040,041,100,101,102,103,104,105,106,107,108,109,110,111,112. Respond ONLY with JSON: {"code":"XXX"} or {"code":"none"} if not found.`}]}]})
+        });
+        const data=await resp.json();
+        const text=data.content?.map(c=>c.text||"").join("")||"";
+        const clean=text.replace(/```json|```/g,"").trim();
+        const parsed=JSON.parse(clean);
+        if(parsed.code&&parsed.code!=="none"){
+          S.form.oscarCode=parsed.code;
+          toast("Código e-OSCAR detectado: "+parsed.code);
+          render();
+        }else{toast("No se detectó código. Selecciónalo manualmente.")}
+      }catch(err){console.error(err);toast("No se pudo analizar. Selecciona el código manualmente.")}
+    };
+    reader.readAsDataURL(file);
+  };inp.click();
+}
+
+function triggerAIUpload(clientId,bureau){
+  const inp=document.createElement('input');inp.type='file';inp.accept='image/*,.pdf';
+  inp.onchange=async e=>{const file=e.target.files[0];if(!file)return;await processAIReport(file,clientId,bureau)};
+  inp.click();
+}
+
+function triggerFullAnalysis(clientId){
+  const inp=document.createElement('input');inp.type='file';inp.accept='image/*,.pdf';
+  inp.onchange=async e=>{const file=e.target.files[0];if(!file)return;await processAIReport(file,clientId,'ALL')};
+  inp.click();
+}
+
+async function processAIReport(file,clientId,bureau){
+  if(!getApiKey()){toast("⚠ Configura tu API Key primero (menú → 🔑 API Key)");return;}
+  S.aiProcessing=true;render();
+  try{
+    const base64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(",")[1]);r.onerror=()=>rej();r.readAsDataURL(file)});
+    const mediaType=file.type.includes("pdf")?"application/pdf":file.type||"image/jpeg";
+    const contentBlock=file.type.includes("pdf")?
+      {type:"document",source:{type:"base64",media_type:mediaType,data:base64}}:
+      {type:"image",source:{type:"base64",media_type:mediaType,data:base64}};
+    const bureauInstructions=bureau==='ALL'?
+      'Extract for ALL THREE bureaus (TransUnion, Experian, Equifax). Return a separate entry for each bureau where the account appears.':
+      `Extract ONLY for bureau: ${bureau}.`;
+    const resp=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",headers:{"Content-Type":"application/json","x-api-key":getApiKey(),"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:4000,
+        messages:[{role:"user",content:[contentBlock,
+          {type:"text",text:`Analyze this credit analysis report. ${bureauInstructions}
+
+Extract ALL negative accounts to dispute, inquiries to dispute, and personal information to dispute.
+
+For each negative account: creditor name, account number (as shown), type (Late Payment, Charge-off, Collection, Settled), balance, and the bureau (equifax, experian, or transunion).
+For inquiries: creditor name, date, and bureau.
+For personal info: item description, details, and bureau.
+
+IMPORTANT: Create SEPARATE entries for EACH BUREAU where an account appears. For example if FST PREMIER appears in TU, EX, and EQ, create 3 entries.
+
+Respond ONLY with valid JSON, no markdown, no backticks:
+{"items":[{"bureau":"equifax|experian|transunion","type":"Charge-off|Collection|Late Payment|Settled|Inquiry|Info Personal","creditor_name":"...","account_number":"...","balance":"...","date":"...","notes":"..."}]}
+If you cannot read clearly, return empty items. JSON only.`}]}]})
+    });
+    const data=await resp.json();
+    const text=data.content?.map(c=>c.text||"").join("")||"";
+    const clean=text.replace(/```json|```/g,"").trim();
+    const parsed=JSON.parse(clean);
+    let count=0;
+    if(parsed.items){
+      parsed.items.forEach(a=>{
+        const acctType=a.type||"Otro";
+        S.data.accounts.push({id:gid(),clientId,
+          bureau:a.bureau||bureau,
+          acctType,
+          creditorName:a.creditor_name||"",
+          accountNumber:a.account_number||"",
+          balance:a.balance||"",
+          date:a.date||"",
+          notes:a.notes||"",
+          bureaus:a.bureau||bureau,
+          status:"active",
+          createdAt:new Date().toISOString()
+        });
+        count++;
+      });
+    }
+    save();toast(count+" elementos extraídos"+(bureau==='ALL'?" de los 3 burós":" de "+bureau));
+  }catch(err){console.error(err);toast("Error al procesar. Intenta con otra imagen/PDF.")}
+  S.aiProcessing=false;render();
+}
+
+function handleWizardFile(field,useCamera){
+  const inp=document.createElement('input');inp.type='file';
+  if(useCamera){inp.accept='image/*';inp.setAttribute('capture','environment')}
+  else{inp.accept='image/*,.pdf'}
+  inp.onchange=e=>{const file=e.target.files[0];if(!file)return;
+    const reader=new FileReader();reader.onload=ev=>{
+      if(!S.wizardData.docs)S.wizardData.docs={};
+      if(file.type.indexOf('pdf')>=0){S.wizardData.docs[field]={name:file.name,data:ev.target.result,isPdf:true};render();return}
+      const img=new Image();img.onload=()=>{
+        const canvas=document.createElement('canvas');const MAX=600;let w=img.width,h=img.height;
+        if(w>MAX){h=h*(MAX/w);w=MAX}if(h>MAX){w=w*(MAX/h);h=MAX}
+        canvas.width=w;canvas.height=h;canvas.getContext('2d').drawImage(img,0,0,w,h);
+        S.wizardData.docs[field]={name:file.name,data:canvas.toDataURL('image/jpeg',0.7)};render();
+      };img.src=ev.target.result;
+    };reader.readAsDataURL(file);
+  };inp.click();
+}
+
+// ===== RENDER =====
+function render(){
+  const app=document.getElementById("app");
+  if(!S.role){
+    app.innerHTML=`<div class="login-screen">
+      <img src="${LOGO_B64}" class="login-logo" alt="FIGA Consulting">
+      <div class="login-cards">
+        <div class="login-card" onclick="setRole('client')"><div class="icon">📋</div><h3>Soy Cliente</h3><p>Registro y carga de documentos</p></div>
+        <div class="login-card" id="cc" onclick="document.getElementById('pinArea').classList.add('show')"><div class="icon">⚡</div><h3>Consultor FIGA</h3><p>Panel de control</p></div>
+      </div>
+      <div class="login-pin" id="pinArea"><p style="color:var(--text3);font-size:13px;margin-bottom:10px">PIN de acceso</p>
+        <input type="password" id="pinInput" maxlength="4" placeholder="••••" onkeyup="if(event.key==='Enter')checkPin()">
+        <button class="btn btn-p" onclick="checkPin()">Entrar</button></div></div>`;return;
+  }
+  if(S.role==="client"){
+    if(!S.wizardData.serviceType){
+      app.innerHTML='<div class="wizard"><div class="wizard-header"><img src="'+LOGO_B64+'" class="wizard-logo"></div><h2 class="wizard-title" style="text-align:center">Bienvenido a FIGA Consulting</h2><p class="wizard-sub" style="text-align:center">Selecciona el servicio que necesitas</p><div style="display:flex;flex-direction:column;gap:12px;margin-top:20px"><div class="login-card" style="width:100%;max-width:100%;padding:20px 24px;text-align:left;display:flex;align-items:center;gap:16px" onclick="setW(\'serviceType\',\'credit_repair\');render()"><div style="font-size:36px">🔧</div><div><h3 style="font-size:16px;font-weight:700;margin-bottom:4px">Reparación de Crédito</h3><p style="font-size:12px;color:var(--text3);margin:0">Disputas, eliminación de cuentas negativas e inquiries</p></div></div><div class="login-card" style="width:100%;max-width:100%;padding:20px 24px;text-align:left;display:flex;align-items:center;gap:16px" onclick="setW(\'serviceType\',\'funding\');render()"><div style="font-size:36px">💰</div><div><h3 style="font-size:16px;font-weight:700;margin-bottom:4px">Consultoría de Funding</h3><p style="font-size:12px;color:var(--text3);margin:0">Capital, líneas de crédito y financiamiento</p></div></div><div class="login-card" style="width:100%;max-width:100%;padding:20px 24px;text-align:left;display:flex;align-items:center;gap:16px" onclick="setW(\'serviceType\',\'empresa\');render()"><div style="font-size:36px">🏢</div><div><h3 style="font-size:16px;font-weight:700;margin-bottom:4px">Creación de Empresa</h3><p style="font-size:12px;color:var(--text3);margin:0">LLC o Corporación — formación legal</p></div></div></div><div class="wizard-actions"><button class="btn btn-s" onclick="wizardGoHome()">← Inicio</button></div></div><div class="toast" id="toast"></div>';return;
+    }
+    renderWizard();return;
+  }
+  renderConsultant();
+}
+
+function checkPin(){if(document.getElementById("pinInput")?.value===getPIN())setRole("consultant");else toast("PIN incorrecto")}
+
+
+// API KEY MANAGEMENT
+function getApiKey(){try{return localStorage.getItem("figa_api_key")||""}catch(e){return""}}
+function setApiKey(k){try{localStorage.setItem("figa_api_key",k)}catch(e){}}
+function promptApiKey(){
+  const current=getApiKey();
+  const key=prompt("Pega tu API Key de Anthropic (console.anthropic.com):\n\nActual: "+(current?current.substring(0,12)+"...":"No configurada"));
+  if(key!==null){setApiKey(key.trim());toast(key.trim()?"API Key guardada":"API Key eliminada")}
+}
+
+// BACKUP FUNCTIONS  
+function exportBackup(){
+  const data=JSON.stringify(S.data,null,2);
+  const blob=new Blob([data],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download="FIGA_Backup_"+new Date().toISOString().split("T")[0]+".json";
+  a.click();URL.revokeObjectURL(url);
+  toast("Backup descargado");
+}
+function importBackup(){
+  const inp=document.createElement("input");inp.type="file";inp.accept=".json";
+  inp.onchange=e=>{
+    const file=e.target.files[0];if(!file)return;
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      try{
+        const imported=JSON.parse(ev.target.result);
+        if(imported.clients){
+          if(confirm("Esto reemplazará TODOS tus datos actuales con el backup. ¿Continuar?")){
+            S.data=imported;save();toast("Backup restaurado: "+imported.clients.length+" clientes");render();
+          }
+        }else{toast("Archivo no válido")}
+      }catch(err){toast("Error leyendo archivo")}
+    };reader.readAsText(file);
+  };inp.click();
+}
+
+// WIZARD
+function renderWizard(){
+  const app=document.getElementById("app");const step=S.wizardStep;const f=S.wizardData;
+  const stepsH=Array.from({length:5},(_,i)=>`<div class="wizard-step ${i<step?"done":i===step?"current":""}"></div>`).join("");
+  let c="";
+  if(step===0){
+    const stateOpts=US_STATES.map(s=>`<option value="${s}" ${f.state===s?"selected":""}>${s} - ${US_STATE_NAMES[s]}</option>`).join("");
+    c=`<h2 class="wizard-title">Datos Personales</h2><p class="wizard-sub">Ingresa tu información</p>
+    <div class="wizard-card">
+      <div class="fg-row"><div class="fg"><label>Nombre <span class="req">*</span></label><input value="${esc(f.firstName||"")}" oninput="setW('firstName',this.value)" placeholder="Tu nombre"></div>
+      <div class="fg"><label>Apellido <span class="req">*</span></label><input value="${esc(f.lastName||"")}" oninput="setW('lastName',this.value)" placeholder="Tu apellido"></div></div>
+      <div class="fg"><label>SSN <span class="req">*</span></label>
+        <div style="position:relative"><input value="${esc(f.ssn||"")}" oninput="setW('ssn',this.value)" type="${wizardSsnVisible?"text":"password"}" placeholder="123-45-6789" style="padding-right:44px">
+        <button type="button" onclick="toggleWizardSsn()" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:0;border:0;cursor:pointer;font-size:16px;color:var(--text3)">${wizardSsnVisible?"🙈":"👁"}</button></div>
+      </div>
+      <div class="fg"><label>Fecha de Nacimiento</label><input type="date" value="${f.dob||""}" oninput="setW('dob',this.value)"></div>
+      <div class="fg"><label>Teléfono <span class="req">*</span></label><input value="${esc(f.phone||"")}" oninput="setW('phone',this.value)" placeholder="(555) 123-4567" type="tel"></div>
+      <div class="fg"><label>Correo Electrónico</label><input type="email" value="${esc(f.personalEmail||"")}" oninput="setW('personalEmail',this.value)"></div>
+      <div class="fg"><label>Dirección <span class="req">*</span></label><input value="${esc(f.address||"")}" oninput="setW('address',this.value)" placeholder="123 Main St, Apt 4"></div>
+      <div class="fg-row"><div class="fg"><label>Ciudad</label><input value="${esc(f.city||"")}" oninput="setW('city',this.value)"></div>
+      <div class="fg"><label>Condado</label><input value="${esc(f.county||"")}" oninput="setW('county',this.value)"></div></div>
+      <div class="fg-row"><div class="fg"><label>Estado <span class="req">*</span></label><select onchange="setW('state',this.value)"><option value="">Seleccionar estado...</option>${stateOpts}</select></div>
+      <div class="fg"><label>Zip Code</label><input value="${esc(f.zip||"")}" oninput="setW('zip',this.value)"></div></div>
+    </div>`;
+  }else if(step===1){
+    c=`<h2 class="wizard-title">Credenciales de Crédito</h2><p class="wizard-sub">Tus burós y monitor</p>
+    <div class="wizard-card">
+      <div class="section-title">🏦 Burós de Crédito</div>
+      ${["Equifax","Experian","TransUnion"].map(b=>{const k=b.toLowerCase();return`<p style="font-size:12px;font-weight:600;color:var(--text3);margin:10px 0 4px">${b}</p>
+      <div class="fg-row"><div class="fg"><label>Usuario</label><input value="${esc(f[k+'User']||"")}" oninput="setW('${k}User',this.value)"></div>
+      <div class="fg"><label>Contraseña</label><input value="${esc(f[k+'Pass']||"")}" oninput="setW('${k}Pass',this.value)"></div></div>`}).join("")}
+      <div class="section-title" style="margin-top:20px">📊 Monitor de Crédito</div>
+      <div class="fg"><label>Selecciona tu monitor</label><select onchange="setW('monitorType',this.value)"><option value="">Seleccionar...</option>${MONITORS.map(m=>`<option value="${m}" ${f.monitorType===m?"selected":""}>${m}</option>`).join("")}</select></div>
+      <div class="fg-row"><div class="fg"><label>Usuario</label><input value="${esc(f.monitorUser||"")}" oninput="setW('monitorUser',this.value)"></div>
+      <div class="fg"><label>Contraseña</label><input value="${esc(f.monitorPass||"")}" oninput="setW('monitorPass',this.value)"></div></div>
+      <div style="margin-top:12px"><p style="font-size:13px;color:var(--text3);margin-bottom:8px">¿No tienes monitor de crédito?</p>
+      <a href="https://myfreescorenow.com" target="_blank" class="referral-link">👉 Haz clic aquí para obtener tu monitor</a></div>
+    </div>`;
+  }else if(step===2){
+    const isF=f.serviceType==="funding";
+    c=`<h2 class="wizard-title">Tipo de Servicio</h2><p class="wizard-sub">¿Qué necesitas?</p>
+    <div class="wizard-card">
+      <div class="fg"><label>Servicio</label><select onchange="setW('serviceType',this.value);render()">
+        <option value="">Seleccionar...</option>
+        <option value="credit_repair" ${f.serviceType==="credit_repair"?"selected":""}>Restauración de Crédito</option>
+        <option value="funding" ${f.serviceType==="funding"?"selected":""}>Consultoría de Funding</option>
+      </select></div>
+      ${isF?`<div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+        <div class="section-title">💳 Información de Funding</div>
+        <div class="fg"><label>Número de tarjetas personales</label><input type="number" value="${f.numCards||""}" oninput="setW('numCards',this.value)"></div>
+        <div class="fg"><label>Límite total de crédito</label><input value="${esc(f.totalLimit||"")}" oninput="setW('totalLimit',this.value)" placeholder="$10,000"></div>
+        <div class="fg"><label>% de utilización</label><input value="${esc(f.utilization||"")}" oninput="setW('utilization',this.value)" placeholder="30%"></div>
+        <div class="fg"><label>Antigüedad tarjeta más antigua</label><input value="${esc(f.oldestCard||"")}" oninput="setW('oldestCard',this.value)"></div>
+        <div class="fg"><label>¿Manchas derogatorias?</label><select onchange="setW('hasDerogatory',this.value)"><option value="">Seleccionar...</option><option value="si" ${f.hasDerogatory==="si"?"selected":""}>Sí</option><option value="no" ${f.hasDerogatory==="no"?"selected":""}>No</option></select></div>
+      </div>`:""}</div>`;
+  }else if(step===3){
+    const docs=f.docs||{};
+    c=`<h2 class="wizard-title">📄 Documentos</h2><p class="wizard-sub">Sube tus documentos requeridos</p>
+    <div style="background:var(--yellow-bg);border:2px solid rgba(245,158,11,0.4);border-radius:12px;padding:18px;margin-bottom:16px">
+      <div style="font-size:15px;font-weight:800;color:var(--yellow);text-transform:uppercase;margin-bottom:8px;text-align:center">⚠️ IMPORTANTE — LEER ANTES DE SUBIR ⚠️</div>
+      <div style="font-size:13px;color:#92400E;line-height:1.6"><b>SE RECOMIENDA CARGAR EN FORMATO PDF.</b><br><br>Si va a tomar <b>FOTOGRAFÍA</b>:<br>• Fondo <b>NEGRO o BLANCO</b> uniforme<br>• <b>SIN SOMBRAS</b> alrededor del documento<br>• <b>SIN FLASH</b> — use luz natural<br>• Asegúrese que el texto sea <b>LEGIBLE</b></div>
+    </div>
+    <div class="wizard-card">
+      ${[["ssn","📄 Social Security Card"],["id","🪪 ID (Licencia, Pasaporte o Permiso)"],["bill","🏠 Bill (Gas, Luz o Agua)"],["bank","🏦 Estado de Cuenta Bancario"]].map(([k,l])=>`
+      <div class="fg"><label>${l}</label>
+        <div style="display:flex;gap:8px;margin-top:4px">
+          <div class="upload-zone ${docs[k]?"has-file":""}" onclick="handleWizardFile('${k}',false)" style="flex:1;padding:14px">
+            ${docs[k]?`<p>✅ ${esc(docs[k].name)}</p>`:`<div class="uzi">📄</div><p>Subir PDF o foto</p>`}
+          </div>
+          <button class="btn btn-s" onclick="handleWizardFile('${k}',true)" style="padding:12px 14px;font-size:20px;flex-shrink:0" title="Tomar foto">📸</button>
+        </div></div>`).join("")}
+    </div>`;
+  }else{
+    c=`<div class="wizard-success"><div class="icon">🎉</div><h2 class="wizard-title">¡Registro Completado!</h2>
+    <p style="color:var(--text3);margin-top:8px;font-size:14px">Tu información ha sido enviada al equipo de FIGA Consulting.</p>
+    <button class="btn btn-p" style="margin-top:24px" onclick="wizardGoHome()">Volver al Inicio</button></div>`;
+  }
+  document.getElementById("app").innerHTML=`<div class="wizard"><div class="wizard-header"><img src="${LOGO_B64}" class="wizard-logo">${step<4?`<div class="wizard-steps">${stepsH}</div>`:""}</div>${c}
+  ${step<4?`<div class="wizard-actions"><button class="btn btn-s" onclick="wizardBack()">← Atrás</button>${step>0?`<button class="btn btn-p" onclick="wizardNext()">${step===3?"Enviar Registro":"Siguiente →"}</button>`:""}</div>`:""}</div><div class="toast" id="toast"></div>`;
+}
+
+// ===== CONSULTANT =====
+function renderConsultant(){
+  const {view:v,data:d,client:sc}=S;
+  const overdue=getOverdue();const upcoming=getUpcoming();const oc=overdue.length;
+  let html="";
+  const sources=d.sources||["FIGA Directo"];
+  const sf=S.sourceFilter;
+  const filteredClients=sf==="all"?d.clients:d.clients.filter(c=>c.source===sf);
+
+  if(v==="dashboard"){
+    const tc=d.clients.length;const ad=d.disputes.filter(x=>!["resuelta","rechazada"].includes(x.status)).length;
+    const rd=d.disputes.filter(x=>x.status==="resuelta").length;const elim=d.accounts.filter(x=>x.status==="eliminated").length;
+    html=`<h1 class="page-title">Dashboard</h1><p class="page-sub">Panel de Control FIGA</p>
+    ${oc>0?`<div class="alert-banner"><span class="icon">🚨</span><span class="count">${oc}</span><span class="text">disputa${oc>1?"s":""} necesita${oc>1?"n":""} reenvío <b>HOY</b></span></div>`:""}
+    ${upcoming.length>0?`<div class="alert-banner warn"><span class="icon">⏰</span><span class="count">${upcoming.length}</span><span class="text">vence${upcoming.length>1?"n":""} en 2 días</span></div>`:""}
+    <div class="stats-grid">
+      <div class="stat-card"><div class="icon">👥</div><div><div class="stat-val">${tc}</div><div class="stat-lbl">Clientes</div></div></div>
+      <div class="stat-card"><div class="icon">⚔️</div><div><div class="stat-val">${ad}</div><div class="stat-lbl">Disputas activas</div></div></div>
+      <div class="stat-card"><div class="icon">✅</div><div><div class="stat-val">${rd}</div><div class="stat-lbl">Resueltas</div></div></div>
+      <div class="stat-card"><div class="icon">🗑</div><div><div class="stat-val">${elim}</div><div class="stat-lbl">Ctas eliminadas</div></div></div>
+    </div>
+    ${oc>0?`<h2 class="section-title">🔴 Reenvío Pendiente</h2>
+    <div class="table-wrap"><table><thead><tr><th>Cliente</th><th>Tipo</th><th>Destino</th><th>Acreedor</th><th>R</th><th>Vencida</th><th></th></tr></thead><tbody>
+    ${overdue.map(x=>{const c=d.clients.find(c=>c.id===x.clientId);const days=Math.abs(daysUntil(x));
+    return`<tr class="overdue"><td style="cursor:pointer;color:var(--pri-l)" onclick="selectClient('${x.clientId}')">${esc(c?.firstName||"")} ${esc(c?.lastName||"")}</td>
+    <td><span class="badge" style="color:${x.type==="metro2"?"#8B5CF6":"#3B82F6"};background:${x.type==="metro2"?"var(--purple-bg)":"var(--pri-bg)"}">${x.type==="metro2"?"M2":"Reg"}</span></td>
+    <td>${esc(x.target||"—")}</td><td>${esc(x.creditorName||"—")}</td><td>R${x.round||1}</td>
+    <td style="color:var(--red);font-weight:600">${days}d</td>
+    <td><button class="btn btn-p btn-sm" onclick="resendDispute('${x.id}')">Reenviar</button></td></tr>`}).join("")}
+    </tbody></table></div>`:""}
+    ${tc===0?`<div class="empty"><span class="icon">👥</span><p>Sin clientes aún</p><br><button class="btn btn-p" onclick="openModal('addClient')">＋ Crear cliente</button></div>`:""}`;
+  }
+
+  else if(v==="clients"){
+    const srch=S.search.toLowerCase();
+    const list=filteredClients.filter(c=>!srch||`${c.firstName} ${c.lastName}`.toLowerCase().includes(srch)||c.personalEmail?.toLowerCase().includes(srch)||c.phone?.includes(srch));
+    html=`<div class="top-bar"><div><h1 class="page-title">Clientes</h1><p class="page-sub">${d.clients.length} total</p></div>
+    <div style="display:flex;gap:8px"><button class="btn btn-p" onclick="openModal('addClient')">＋ Crear Cliente</button><button class="btn btn-s" onclick="openModal('manageSources')">📁 Fuentes</button></div></div>
+    <div class="source-filter"><span class="source-chip ${sf==="all"?"active":""}" onclick="setSourceFilter('all')">Todos (${d.clients.length})</span>
+    ${sources.map(s=>`<span class="source-chip ${sf===s?"active":""}" onclick="setSourceFilter('${esc(s)}')">${esc(s)} (${d.clients.filter(c=>c.source===s).length})</span>`).join("")}</div>
+    <input class="search-input" placeholder="🔍 Buscar..." value="${esc(S.search)}" oninput="S.search=this.value;render()">
+    ${list.length===0?`<div class="empty"><span class="icon">👥</span><p>Sin resultados</p></div>`:
+    list.map(c=>{const hasOd=d.disputes.some(x=>x.clientId===c.id&&daysUntil(x)!==null&&daysUntil(x)<=0);
+    return`<div class="client-card" onclick="selectClient('${c.id}')">
+      <div class="avatar">${(c.firstName?.[0]||"").toUpperCase()}</div>
+      <div style="flex:1"><div class="c-name">${esc(c.firstName)} ${esc(c.lastName)}${c.source&&c.source!=="FIGA Directo"?`<span class="c-source">${esc(c.source)}</span>`:""}</div>
+      <div class="c-info">${esc(c.phone||c.personalEmail||"")} · ${c.serviceType==="funding"?"💰":"🔧"}</div></div>
+      <div style="text-align:right">${hasOd?`<span class="badge badge-overdue" style="color:var(--red);background:var(--red-bg)">⚠</span>`:""}<div style="font-size:10px;color:var(--text4);margin-top:3px">${fD(c.createdAt)}</div></div></div>`}).join("")}`;
+  }
+
+  else if(v==="detail"&&sc){
+    const ca=d.accounts.filter(a=>a.clientId===sc.id);const cd=d.disputes.filter(x=>x.clientId===sc.id);
+    const cn=d.notes.filter(n=>n.clientId===sc.id);const bt=S.bureauTab;
+    const bAccts=ca.filter(a=>a.bureau===bt);
+
+    html=`<button class="btn-back" onclick="setView('clients')">← Volver</button>
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:8px;flex-wrap:wrap">
+      <div class="avatar lg">${(sc.firstName?.[0]||"").toUpperCase()}</div>
+      <div style="flex:1"><h1 class="page-title">${esc(sc.firstName)} ${esc(sc.lastName)}${sc.source&&sc.source!=="FIGA Directo"?`<span class="c-source" style="font-size:12px;vertical-align:middle;margin-left:8px">${esc(sc.source)}</span>`:""}</h1>
+      <div style="font-size:12px;color:var(--text3);margin-top:3px">${esc(sc.phone||"")} · ${sc.serviceType==="funding"?"💰 Funding":"🔧 Crédito"}</div></div>
+      <button class="btn btn-s btn-sm" onclick="openModal('editClient',JSON.parse(JSON.stringify(S.client)))">Editar</button>
+      <button class="btn btn-d btn-sm" onclick="deleteClient('${sc.id}')">Eliminar</button>
+    </div>
+    <div class="tabs">
+      <button class="tab ${S.tab==="info"?"active":""}" onclick="setTab('info')">📋 Info</button>
+      <button class="tab ${S.tab==="internal"?"active":""}" onclick="setTab('internal')">🔧 FIGA</button>
+      <button class="tab ${S.tab==="accounts"?"active":""}" onclick="setTab('accounts')">🏦 Cuentas (${ca.length})</button>
+      <button class="tab ${S.tab==="disputes"?"active":""}" onclick="setTab('disputes')">⚔️ Disputas (${cd.length})</button>
+      <button class="tab ${S.tab==="docs"?"active":""}" onclick="setTab('docs')">📄 Docs</button>
+      <button class="tab ${S.tab==="notes"?"active":""}" onclick="setTab('notes')">📝 Notas</button>
+    </div>`;
+
+    if(S.tab==="info"){
+      html+=`<div class="cred-group"><div class="cred-title">👤 Datos Personales</div>
+        <div class="cred-row"><div class="cred-item"><div class="cred-label">Nombre</div><div class="cred-value">${esc(sc.firstName)} ${esc(sc.lastName)}</div></div>
+        <div class="cred-item"><div class="cred-label">DOB</div><div class="cred-value">${esc(sc.dob||"—")}</div></div></div>
+        <div class="cred-row"><div class="cred-item"><div class="cred-label">SSN</div><div class="cred-value">${pwd(sc.ssn,"ssn")} <span class="toggle" onclick="togglePwd('ssn')">${shown.has("ssn")?"🙈":"👁"}</span></div></div>
+        <div class="cred-item"><div class="cred-label">Teléfono</div><div class="cred-value">${esc(sc.phone||"—")}</div></div></div>
+        <div class="cred-row"><div class="cred-item"><div class="cred-label">Dirección</div><div class="cred-value">${[sc.address,sc.city,sc.county,sc.state,sc.zip].filter(Boolean).map(esc).join(", ")||"—"}</div></div></div>
+        <div class="cred-row"><div class="cred-item"><div class="cred-label">Email</div><div class="cred-value">${esc(sc.personalEmail||"—")}</div></div>
+        <div class="cred-item"><div class="cred-label">Fuente</div><div class="cred-value">${esc(sc.source||"FIGA Directo")}</div></div></div>
+      </div>
+      <div class="cred-group"><div class="cred-title">🏦 Credenciales Burós</div>
+        ${["Equifax","Experian","TransUnion"].map(b=>{const k=b.toLowerCase();return`<p style="font-size:11px;font-weight:600;color:var(--text4);margin:8px 0 3px">${b}</p>
+        <div class="cred-row"><div class="cred-item"><div class="cred-label">Usuario</div><div class="cred-value">${esc(sc[k+"User"]||"—")}</div></div>
+        <div class="cred-item"><div class="cred-label">Contraseña</div><div class="cred-value">${pwd(sc[k+"Pass"],k)} <span class="toggle" onclick="togglePwd('${k}')">${shown.has(k)?"🙈":"👁"}</span></div></div></div>`}).join("")}
+      </div>
+      <div class="cred-group"><div class="cred-title">📊 Monitor: ${esc(sc.monitorType||"N/A")}</div>
+        <div class="cred-row"><div class="cred-item"><div class="cred-label">Usuario</div><div class="cred-value">${esc(sc.monitorUser||"—")}</div></div>
+        <div class="cred-item"><div class="cred-label">Contraseña</div><div class="cred-value">${pwd(sc.monitorPass,"mon")} <span class="toggle" onclick="togglePwd('mon')">${shown.has("mon")?"🙈":"👁"}</span></div></div></div>
+      </div>
+      ${sc.serviceType==="funding"?`<div class="cred-group"><div class="cred-title">💳 Funding</div>
+        <div class="cred-row"><div class="cred-item"><div class="cred-label">Tarjetas</div><div class="cred-value">${esc(sc.numCards||"—")}</div></div>
+        <div class="cred-item"><div class="cred-label">Límite</div><div class="cred-value">${esc(sc.totalLimit||"—")}</div></div></div>
+        <div class="cred-row"><div class="cred-item"><div class="cred-label">Utilización</div><div class="cred-value">${esc(sc.utilization||"—")}</div></div>
+        <div class="cred-item"><div class="cred-label">Más antigua</div><div class="cred-value">${esc(sc.oldestCard||"—")}</div></div></div>
+        <div class="cred-row"><div class="cred-item"><div class="cred-label">Derogatorias</div><div class="cred-value">${sc.hasDerogatory==="si"?"Sí":"No"}</div></div></div></div>`:""}`; 
+    }
+    else if(S.tab==="internal"){
+      html+=`<div class="cred-group"><div class="cred-title">✉️ Email FIGA</div>
+        <div class="cred-row"><div class="cred-item"><div class="cred-label">Email</div><div class="cred-value">${esc(sc.figaEmail||"—")}</div></div>
+        <div class="cred-item"><div class="cred-label">Contraseña</div><div class="cred-value">${pwd(sc.figaEmailPass,"fep")} <span class="toggle" onclick="togglePwd('fep')">${shown.has("fep")?"🙈":"👁"}</span></div></div></div>
+        <button class="btn btn-s btn-sm" style="margin-top:8px" onclick="openModal('editInternal',{id:'${sc.id}',figaEmail:S.client.figaEmail||'',figaEmailPass:S.client.figaEmailPass||'',personalUpdate:!!S.client.personalUpdate,inquiriesDisputed:!!S.client.inquiriesDisputed})">Editar</button>
+      </div>
+      <div class="cred-group"><div class="cred-title">📋 Historial</div>
+        <div class="cred-row"><div class="cred-item"><div class="cred-label">Actualización Datos</div><div class="cred-value">${sc.personalUpdate?"✅ Sí":"❌ No"}</div></div>
+        <div class="cred-item"><div class="cred-label">Inquiries Disputados</div><div class="cred-value">${sc.inquiriesDisputed?"✅ Sí":"❌ No"}</div></div></div>
+      </div>`;
+    }
+    else if(S.tab==="accounts"){
+      html+=`<div class="bureau-tabs">
+        <button class="bureau-tab ${bt==="equifax"?"active-eq":""}" onclick="setBureauTab('equifax')">Equifax (${ca.filter(a=>a.bureau==="equifax").length})</button>
+        <button class="bureau-tab ${bt==="experian"?"active-ex":""}" onclick="setBureauTab('experian')">Experian (${ca.filter(a=>a.bureau==="experian").length})</button>
+        <button class="bureau-tab ${bt==="transunion"?"active-tu":""}" onclick="setBureauTab('transunion')">TransUnion (${ca.filter(a=>a.bureau==="transunion").length})</button>
+      </div>
+      <div style="margin-bottom:14px"><button class="btn btn-p btn-sm" onclick="openModal('addAccount',{clientId:'${sc.id}',bureau:'${bt}'})">＋ Cuenta</button></div>
+      ${bAccts.length===0?`<p style="color:var(--text4);font-size:13px;font-style:italic">Sin cuentas en ${bt}</p>`:
+      bAccts.map(a=>{const st=gAS(a.status);
+      return`<div class="acct-card ${a.status}"><div style="display:flex;justify-content:space-between;align-items:center">
+        <div><div style="font-weight:600;font-size:14px">${esc(a.creditorName)}</div>
+        <div style="font-size:12px;color:var(--text4);margin-top:2px">${esc(a.acctType||"")} ${a.accountNumber?"· #"+esc(a.accountNumber):""} ${a.balance?"· $"+esc(a.balance):""}</div></div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <select class="status-sel" style="color:${st.c};background:${st.bg}" onchange="updateAcctStatus('${a.id}',this.value)">
+          ${ACCT_ST.map(s=>`<option value="${s.v}" ${s.v===a.status?"selected":""}>${s.l}</option>`).join("")}</select>
+          <button class="btn-del" onclick="deleteAcct('${a.id}')">🗑</button></div></div></div>`}).join("")}`;
+    }
+    else if(S.tab==="disputes"){
+      html+=`<div style="margin-bottom:14px"><button class="btn btn-p btn-sm" onclick="openModal('addDispute',{clientId:'${sc.id}',status:'enviada',round:1})">＋ Nueva Disputa</button></div>
+      ${cd.length===0?`<p style="color:var(--text4);font-size:13px;font-style:italic">Sin disputas</p>`:`
+      <div class="table-wrap"><table><thead><tr><th>Tipo</th><th>Destino</th><th>Acreedor</th><th>e-OSCAR</th><th>R</th><th>Envío</th><th>Guía</th><th>Próx</th><th>Estado</th><th></th></tr></thead><tbody>
+      ${cd.map(x=>{const st=gS(x.status);const days=daysUntil(x);const isOd=days!==null&&days<=0;
+      return`<tr class="${isOd?"overdue":""}">
+      <td><span class="badge" style="color:${x.type==="metro2"?"#8B5CF6":"#3B82F6"};background:${x.type==="metro2"?"var(--purple-bg)":"var(--pri-bg)"}">${x.type==="metro2"?"M2":"Reg"}</span></td>
+      <td style="font-size:11px">${esc(x.target||"—")}</td>
+      <td>${esc(x.creditorName||"—")}</td>
+      <td style="font-size:11px;font-weight:600;color:var(--pri-l)">${esc(x.oscarCode||"—")}</td>
+      <td>${x.round||1}</td>
+      <td style="font-size:11px">${fD(x.sentDate)}</td>
+      <td style="font-size:11px">${esc(x.trackingNumber||"—")}</td>
+      <td style="font-weight:600;color:${isOd?"var(--red)":days!==null&&days<=2?"var(--yellow)":"var(--text3)"}">${days!==null?(isOd?Math.abs(days)+"d!":days+"d"):""}</td>
+      <td><select class="status-sel" style="color:${st.c};background:${st.bg}" onchange="updateDisputeStatus('${x.id}',this.value)">
+      ${STATUSES.map(s=>`<option value="${s.v}" ${s.v===x.status?"selected":""}>${s.l}</option>`).join("")}</select></td>
+      <td style="white-space:nowrap">${isOd?`<button class="btn btn-p btn-sm" style="margin-right:4px" onclick="resendDispute('${x.id}')">↻</button>`:""}<button class="btn-del" onclick="deleteDispute('${x.id}')">🗑</button></td></tr>`}).join("")}
+      </tbody></table></div>`}`;
+    }
+    else if(S.tab==="docs"){
+      const docs=sc.docs||{};
+      html+=`<div class="cred-group"><div class="cred-title">📄 Documentos del Cliente</div>
+      ${[["ssn","Social Security Card"],["id","Identificación Oficial"],["bill","Bill (Gas/Luz/Agua)"],["bank","Estado de Cuenta"]].map(([k,l])=>`<div style="margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border)"><div class="cred-label">${l}</div>
+      ${docs[k]?`<div style="display:flex;align-items:center;gap:12px;margin-top:6px">
+        <img src="${docs[k].data}" class="doc-preview">
+        <div><div style="font-size:12px;color:var(--text3)">${esc(docs[k].name)}</div>
+        <a href="${docs[k].data}" download="${k}_${esc(sc.firstName)}_${esc(sc.lastName)}.jpg" class="btn btn-s btn-sm" style="margin-top:6px;display:inline-block;text-decoration:none">⬇ Descargar</a></div>
+      </div>`:`<span style="font-size:12px;color:var(--text4)">No subido</span>`}</div>`).join("")}
+      </div>
+      <div class="cred-group">
+        <div class="cred-title">🤖 Cargar Informe de Análisis (Extracción con IA)</div>
+        <p style="font-size:12px;color:var(--text3);margin-bottom:12px">Sube tu informe completo y la IA extraerá cuentas negativas, inquiries e info personal a disputar, clasificado por buró.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+          <button class="btn btn-p" onclick="triggerFullAnalysis('${sc.id}')">📄 Cargar Informe Completo (3 Burós)</button>
+        </div>
+        <p style="font-size:11px;color:var(--text4);margin-bottom:8px">O analizar por buró individual:</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-s btn-sm" onclick="triggerAIUpload('${sc.id}','equifax')">Equifax</button>
+          <button class="btn btn-s btn-sm" onclick="triggerAIUpload('${sc.id}','experian')">Experian</button>
+          <button class="btn btn-s btn-sm" onclick="triggerAIUpload('${sc.id}','transunion')">TransUnion</button>
+        </div>
+        ${S.aiProcessing?`<div style="margin-top:12px;padding:12px;background:var(--yellow-bg);border-radius:8px;font-size:13px;color:var(--yellow)">⏳ Procesando con IA... puede tomar 15-30 segundos</div>`:""}
+      </div>`; 
+    }
+    else if(S.tab==="notes"){
+      html+=`<div style="display:flex;gap:12px;align-items:center;margin-bottom:16px;flex-wrap:wrap">
+        <button class="btn btn-p btn-sm" onclick="openModal('addNote',{clientId:'${sc.id}'})">＋ Nota escrita</button>
+        <button class="voice-btn ${isRecording?"recording":""}" onclick="toggleVoice('${sc.id}')">${isRecording?"⏹":"🎙"}</button>
+        <span style="font-size:12px;color:${isRecording?"var(--red)":"var(--text4)"}">${isRecording?"🔴 Grabando... toca ⏹ para detener":"Dictar nota por voz"}</span>
+      </div>
+      ${isRecording?`<div style="background:var(--bg3);border:1px solid var(--red);border-radius:var(--r);padding:14px;margin-bottom:14px"><div style="font-size:12px;color:var(--red);margin-bottom:6px">Transcribiendo...</div><div id="voiceOutput" style="font-size:14px;color:var(--text);min-height:40px"></div></div>`:""}
+      ${cn.length===0?`<p style="color:var(--text4);font-size:13px;font-style:italic">Sin notas</p>`:
+      cn.map(n=>`<div class="note-card"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:11px;color:var(--text4)">${fD(n.createdAt)}</span><button class="btn-del" onclick="deleteNote('${n.id}')">🗑</button></div>
+      ${n.title?`<div style="font-weight:600;font-size:13px;margin-top:4px">${esc(n.title)}</div>`:""}<div style="font-size:13px;color:var(--text2);margin-top:4px;line-height:1.5">${esc(n.text)}</div></div>`).join("")}`;
+    }
+
+    // ALWAYS VISIBLE: Quick Notes + Recent Notes
+    html+=`
+    <div class="quick-notes">
+      <div class="quick-notes-title">📝 Notas Rápidas
+        <button class="voice-btn ${isRecording?"recording":""}" style="width:36px;height:36px;font-size:16px;margin-left:auto" onclick="toggleVoice('${sc.id}')">${isRecording?"⏹":"🎙"}</button>
+        <span style="font-size:11px;color:${isRecording?"var(--red)":"var(--text4)"}">${isRecording?"Grabando...":"Dictar"}</span>
+      </div>
+      ${isRecording?`<div style="background:var(--bg3);border:1px solid var(--red);border-radius:8px;padding:12px;margin-bottom:12px"><div style="font-size:11px;color:var(--red);margin-bottom:4px">🔴 Transcribiendo en vivo...</div><div id="voiceOutput" style="font-size:14px;color:var(--text);min-height:30px"></div></div>`:""}
+      <div class="quick-note-input">
+        <textarea id="quickNoteText" placeholder="Escribe una nota rápida sobre este cliente..."></textarea>
+        <button class="btn btn-p btn-sm" onclick="const t=document.getElementById('quickNoteText');if(t.value.trim()){S.form={clientId:'${sc.id}',text:t.value.trim()};addNote();t.value=''}">Guardar</button>
+      </div>
+      ${cn.length>0?`<div style="font-size:12px;color:var(--text4);margin-bottom:8px">Últimas notas:</div>
+      ${cn.slice(-3).reverse().map(n=>`<div style="background:var(--bg3);border-radius:8px;padding:10px;margin-bottom:6px;font-size:12px">
+        <div style="display:flex;justify-content:space-between"><span style="color:var(--text4)">${fD(n.createdAt)}${n.title?" · "+esc(n.title):""}</span><button class="btn-del" onclick="deleteNote('${n.id}')" style="font-size:11px">✕</button></div>
+        <div style="color:var(--text2);margin-top:4px">${esc(n.text).substring(0,150)}${n.text.length>150?"...":""}</div>
+      </div>`).join("")}
+      ${cn.length>3?`<button class="btn btn-sm btn-s" style="margin-top:6px" onclick="setTab('notes')">Ver todas (${cn.length})</button>`:""}`:""}
+    </div>`;
+  }
+
+  else if(v==="disputes"){
+    const all=[...d.disputes].reverse();
+    html=`<div class="top-bar"><div><h1 class="page-title">Disputas</h1><p class="page-sub">${d.disputes.length} total · ${oc} pendientes</p></div></div>
+    ${oc>0?`<div class="alert-banner"><span class="icon">🚨</span><span class="count">${oc}</span><span class="text">pendiente${oc>1?"s":""} de reenvío</span></div>`:""}
+    ${all.length===0?`<div class="empty"><span class="icon">⚔️</span><p>Sin disputas</p></div>`:`
+    <div class="table-wrap"><table><thead><tr><th>Cliente</th><th>Tipo</th><th>Destino</th><th>Acreedor</th><th>R</th><th>CFPB</th><th>FTC</th><th>Próx</th><th>Estado</th><th></th></tr></thead><tbody>
+    ${all.map(x=>{const c=d.clients.find(c=>c.id===x.clientId);const st=gS(x.status);const days=daysUntil(x);const isOd=days!==null&&days<=0;
+    return`<tr class="${isOd?"overdue":""}"><td style="cursor:pointer;color:var(--pri-l)" onclick="selectClient('${x.clientId}')">${esc(c?.firstName||"")} ${esc(c?.lastName||"")}</td>
+    <td><span class="badge" style="color:${x.type==="metro2"?"#8B5CF6":"#3B82F6"};background:${x.type==="metro2"?"var(--purple-bg)":"var(--pri-bg)"}">${x.type==="metro2"?"M2":"Reg"}</span></td>
+    <td style="font-size:11px">${esc(x.target||"—")}</td><td>${esc(x.creditorName||"—")}</td><td>${x.round||1}</td>
+    <td>${x.usedCFPB?"✅":"—"}</td><td>${x.reportedFTC?"✅":"—"}</td>
+    <td style="font-weight:600;color:${isOd?"var(--red)":days!==null&&days<=2?"var(--yellow)":"var(--text3)"}">${days!==null?(isOd?Math.abs(days)+"d!":days+"d"):""}</td>
+    <td><select class="status-sel" style="color:${st.c};background:${st.bg}" onchange="updateDisputeStatus('${x.id}',this.value)">
+    ${STATUSES.map(s=>`<option value="${s.v}" ${s.v===x.status?"selected":""}>${s.l}</option>`).join("")}</select></td>
+    <td>${isOd?`<button class="btn btn-p btn-sm" onclick="resendDispute('${x.id}')">↻</button>`:""}<button class="btn-del" onclick="deleteDispute('${x.id}')">🗑</button></td></tr>`}).join("")}
+    </tbody></table></div>`}`;
+  }
+
+  else if(v==="sources"){
+    html=`<h1 class="page-title">Fuentes / Empresas</h1><p class="page-sub">Gestiona quién te refiere clientes</p>
+    <button class="btn btn-p" style="margin-bottom:16px" onclick="addSource()">＋ Agregar Fuente</button>
+    ${sources.map(s=>`<div style="display:flex;align-items:center;gap:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:8px">
+      <div style="flex:1;font-weight:600">${esc(s)}</div>
+      <span style="font-size:12px;color:var(--text3)">${d.clients.filter(c=>c.source===s).length} clientes</span>
+      ${s!=="FIGA Directo"?`<button class="btn-del" onclick="removeSource('${esc(s)}')">🗑</button>`:""}
+    </div>`).join("")}`;
+  }
+
+  document.getElementById("app").innerHTML=`<div class="app-layout">
+    <aside class="sidebar"><img src="${LOGO_B64}" class="sidebar-logo">
+      <button class="nav-item ${v==="dashboard"?"active":""}" onclick="setView('dashboard')"><span class="ni">📊</span>Dashboard${oc>0?`<span class="nav-alert">${oc}</span>`:""}</button>
+      <button class="nav-item ${v==="clients"||v==="detail"?"active":""}" onclick="setView('clients')"><span class="ni">👥</span>Clientes</button>
+      <button class="nav-item ${v==="disputes"?"active":""}" onclick="setView('disputes')"><span class="ni">⚔️</span>Disputas${oc>0?`<span class="nav-alert">${oc}</span>`:""}</button>
+      <button class="nav-item ${v==="sources"?"active":""}" onclick="setView('sources')"><span class="ni">📁</span>Fuentes</button>
+      <div class="nav-sep"></div>
+      <button class="nav-item" onclick="changePin()"><span class="ni">🔑</span>Cambiar PIN</button>
+      <button class="nav-item" onclick="promptApiKey()"><span class="ni">🤖</span>API Key ${getApiKey()?"✅":"⚠"}</button>
+      <button class="nav-item" onclick="exportBackup()"><span class="ni">💾</span>Exportar Backup</button>
+      <button class="nav-item" onclick="importBackup()"><span class="ni">📂</span>Importar Backup</button>
+      <button class="nav-item" onclick="logout()"><span class="ni">🚪</span>Salir</button>
+      <div class="sidebar-footer">FIGA Consulting © ${new Date().getFullYear()}</div>
+    </aside>
+    <main class="main">${html}</main>
+    <nav class="mobile-nav">
+      <button class="${v==="dashboard"?"active":""}" onclick="setView('dashboard')"><span class="mn">📊</span>Inicio${oc>0?`<span class="m-dot"></span>`:""}</button>
+      <button class="${v==="clients"||v==="detail"?"active":""}" onclick="setView('clients')"><span class="mn">👥</span>Clientes</button>
+      <button class="${v==="disputes"?"active":""}" onclick="setView('disputes')"><span class="mn">⚔️</span>Disputas${oc>0?`<span class="m-dot"></span>`:""}</button>
+      <button class="${v==="sources"?"active":""}" onclick="setView('sources')"><span class="mn">📁</span>Fuentes</button>
+      <button onclick="exportBackup()"><span class="mn">💾</span>Backup</button>
+      <button onclick="logout()"><span class="mn">🚪</span>Salir</button>
+    </nav>
+  </div><div class="toast" id="toast"></div>${S.view==="detail"&&S.client?`<div class="floating-mic"><button class="voice-btn ${isRecording?"recording":""}" onclick="toggleVoice('${S.client.id}')">${isRecording?"⏹":"🎙"}</button><span class="mic-label">${isRecording?"🔴 GRABANDO":"🎙 DICTAR NOTA"}</span></div>`:""}`;
+  if(S.modal)renderModal();
+}
+
+// ===== MODALS =====
+function renderModal(){
+  document.querySelectorAll('.overlay').forEach(el=>el.remove());
+  const m=S.modal;const f=S.form;let title="",fields="",action="";
+  const sources=S.data.sources||["FIGA Directo"];
+  const clientOpts=S.data.clients.map(c=>`<option value="${c.id}">${esc(c.firstName)} ${esc(c.lastName)}</option>`).join("");
+
+  if(m==="addClient"){
+    title="Crear Cliente";
+    fields=`
+    <div class="fg"><label>Fuente / Empresa</label><select onchange="setF('source',this.value)">
+    ${sources.map(s=>`<option value="${s}" ${f.source===s?"selected":""}>${s}</option>`).join("")}</select></div>
+    <div class="fg-row"><div class="fg"><label>Nombre <span class="req">*</span></label><input value="${esc(f.firstName||"")}" oninput="setF('firstName',this.value)"></div>
+    <div class="fg"><label>Apellido <span class="req">*</span></label><input value="${esc(f.lastName||"")}" oninput="setF('lastName',this.value)"></div></div>
+    <div class="fg-row"><div class="fg"><label>DOB</label><input type="date" value="${f.dob||""}" oninput="setF('dob',this.value)"></div>
+    <div class="fg"><label>SSN</label><input value="${esc(f.ssn||"")}" oninput="setF('ssn',this.value)"></div></div>
+    <div class="fg"><label>Teléfono</label><input value="${esc(f.phone||"")}" oninput="setF('phone',this.value)"></div>
+    <div class="fg"><label>Email</label><input value="${esc(f.personalEmail||"")}" oninput="setF('personalEmail',this.value)"></div>
+    <div class="fg"><label>Dirección</label><input value="${esc(f.address||"")}" oninput="setF('address',this.value)"></div>
+    <div class="fg-row"><div class="fg"><label>Ciudad</label><input value="${esc(f.city||"")}" oninput="setF('city',this.value)"></div>
+    <div class="fg"><label>Estado</label><select onchange="setF('state',this.value)"><option value="">Seleccionar...</option>${US_STATES.map(s=>`<option value="${s}" ${f.state===s?"selected":""}>${s} - ${US_STATE_NAMES[s]}</option>`).join("")}</select></div>
+    <div class="fg"><label>Zip</label><input value="${esc(f.zip||"")}" oninput="setF('zip',this.value)"></div></div>
+    <div class="fg"><label>Servicio</label><select onchange="setF('serviceType',this.value)"><option value="credit_repair">Restauración de Crédito</option><option value="funding">Consultoría de Funding</option></select></div>`;
+    action=`<button class="btn btn-p" style="width:100%;margin-top:12px" onclick="addClient()">Crear Cliente</button>`;
+  }
+  else if(m==="editClient"){
+    title="Editar Cliente";
+    fields=`
+    <div class="fg"><label>Fuente</label><select onchange="setF('source',this.value)">${sources.map(s=>`<option value="${s}" ${f.source===s?"selected":""}>${s}</option>`).join("")}</select></div>
+    <div class="fg-row"><div class="fg"><label>Nombre</label><input value="${esc(f.firstName||"")}" oninput="setF('firstName',this.value)"></div>
+    <div class="fg"><label>Apellido</label><input value="${esc(f.lastName||"")}" oninput="setF('lastName',this.value)"></div></div>
+    <div class="fg-row"><div class="fg"><label>DOB</label><input type="date" value="${f.dob||""}" oninput="setF('dob',this.value)"></div>
+    <div class="fg"><label>SSN</label><input value="${esc(f.ssn||"")}" oninput="setF('ssn',this.value)"></div></div>
+    <div class="fg"><label>Teléfono</label><input value="${esc(f.phone||"")}" oninput="setF('phone',this.value)"></div>
+    <div class="fg"><label>Email</label><input value="${esc(f.personalEmail||"")}" oninput="setF('personalEmail',this.value)"></div>
+    <div class="fg"><label>Dirección</label><input value="${esc(f.address||"")}" oninput="setF('address',this.value)"></div>
+    <div class="fg-row"><div class="fg"><label>Ciudad</label><input value="${esc(f.city||"")}" oninput="setF('city',this.value)"></div>
+    <div class="fg"><label>Estado</label><select onchange="setF('state',this.value)"><option value="">Seleccionar...</option>${US_STATES.map(s=>`<option value="${s}" ${f.state===s?"selected":""}>${s} - ${US_STATE_NAMES[s]}</option>`).join("")}</select></div>
+    <div class="fg"><label>Zip</label><input value="${esc(f.zip||"")}" oninput="setF('zip',this.value)"></div></div>
+    <h4 style="font-size:12px;color:var(--text3);margin:12px 0 6px">Burós</h4>
+    ${["Equifax","Experian","TransUnion"].map(b=>{const k=b.toLowerCase();return`<p style="font-size:11px;color:var(--text4);margin:6px 0 2px">${b}</p>
+    <div class="fg-row"><div class="fg"><label>Usuario</label><input value="${esc(f[k+"User"]||"")}" oninput="setF('${k}User',this.value)"></div>
+    <div class="fg"><label>Contraseña</label><input value="${esc(f[k+"Pass"]||"")}" oninput="setF('${k}Pass',this.value)"></div></div>`}).join("")}
+    <h4 style="font-size:12px;color:var(--text3);margin:12px 0 6px">Monitor</h4>
+    <div class="fg"><select onchange="setF('monitorType',this.value)"><option value="">Seleccionar...</option>${MONITORS.map(m=>`<option value="${m}" ${f.monitorType===m?"selected":""}>${m}</option>`).join("")}</select></div>
+    <div class="fg-row"><div class="fg"><label>Usuario</label><input value="${esc(f.monitorUser||"")}" oninput="setF('monitorUser',this.value)"></div>
+    <div class="fg"><label>Contraseña</label><input value="${esc(f.monitorPass||"")}" oninput="setF('monitorPass',this.value)"></div></div>`;
+    action=`<button class="btn btn-p" style="width:100%;margin-top:12px" onclick="updateClient()">Guardar</button>`;
+  }
+  else if(m==="editInternal"){
+    title="Gestión Interna FIGA";
+    fields=`<div class="fg-row"><div class="fg"><label>Email FIGA</label><input value="${esc(f.figaEmail||"")}" oninput="setF('figaEmail',this.value)"></div>
+    <div class="fg"><label>Contraseña</label><input value="${esc(f.figaEmailPass||"")}" oninput="setF('figaEmailPass',this.value)"></div></div>
+    <div class="fg"><div class="check-row"><input type="checkbox" id="pu" ${f.personalUpdate?"checked":""} onchange="setF('personalUpdate',this.checked)"><label for="pu">Actualización Datos completada</label></div></div>
+    <div class="fg"><div class="check-row"><input type="checkbox" id="iq" ${f.inquiriesDisputed?"checked":""} onchange="setF('inquiriesDisputed',this.checked)"><label for="iq">Inquiries disputados</label></div></div>`;
+    action=`<button class="btn btn-p" style="width:100%;margin-top:12px" onclick="updateClient()">Guardar</button>`;
+  }
+  else if(m==="addAccount"){
+    title="Agregar Cuenta";
+    fields=`<div class="fg"><label>Buró</label><select onchange="setF('bureau',this.value)">
+      <option value="equifax" ${f.bureau==="equifax"?"selected":""}>Equifax</option><option value="experian" ${f.bureau==="experian"?"selected":""}>Experian</option><option value="transunion" ${f.bureau==="transunion"?"selected":""}>TransUnion</option></select></div>
+    <div class="fg"><label>Tipo</label><select onchange="setF('acctType',this.value)"><option value="">Seleccionar...</option>${ACCT_TYPES.map(t=>`<option value="${t}" ${f.acctType===t?"selected":""}>${t}</option>`).join("")}</select></div>
+    <div class="fg"><label>Acreedor <span class="req">*</span></label><input value="${esc(f.creditorName||"")}" oninput="setF('creditorName',this.value)"></div>
+    <div class="fg-row"><div class="fg"><label>No. Cuenta</label><input value="${esc(f.accountNumber||"")}" oninput="setF('accountNumber',this.value)"></div>
+    <div class="fg"><label>Balance</label><input value="${esc(f.balance||"")}" oninput="setF('balance',this.value)"></div></div>
+    <div class="fg"><label>Notas</label><textarea oninput="setF('notes',this.value)">${esc(f.notes||"")}</textarea></div>`;
+    action=`<button class="btn btn-p" style="width:100%;margin-top:12px" onclick="addAccount()">Agregar</button>`;
+  }
+  else if(m==="addDispute"){
+    title="Nueva Disputa";
+    fields=`${!f.clientId?`<div class="fg"><label>Cliente</label><select onchange="setF('clientId',this.value)"><option value="">Seleccionar...</option>${clientOpts}</select></div>`:""}
+    <div class="fg-row"><div class="fg"><label>Tipo</label><select onchange="setF('type',this.value)">
+      <option value="regular" ${f.type!=="metro2"?"selected":""}>Regular (30 días)</option>
+      <option value="metro2" ${f.type==="metro2"?"selected":""}>Metro2/e-OSCAR (16 días)</option></select></div>
+    <div class="fg"><label>Ronda</label><input type="number" value="${f.round||1}" oninput="setF('round',this.value)" min="1"></div></div>
+    <div class="fg"><label>Destino</label><select onchange="setF('target',this.value)"><option value="">Seleccionar...</option>${DISPUTE_TARGETS.map(t=>`<option value="${t}" ${f.target===t?"selected":""}>${t}</option>`).join("")}</select></div>
+    <div class="fg"><label>Acreedor / Cuenta</label><input value="${esc(f.creditorName||"")}" oninput="setF('creditorName',this.value)"></div>
+    <div class="fg"><label>Método / Carta</label><select onchange="setF('method',this.value)"><option value="">Seleccionar...</option>${METHODS.map(m=>`<option value="${m}" ${f.method===m?"selected":""}>${m}</option>`).join("")}</select></div>
+    <div class="fg"><label>Código e-OSCAR <span class="req">*</span></label><select onchange="setF('oscarCode',this.value)" style="font-size:12px"><option value="">⚠ Seleccionar código (obligatorio)...</option>${OSCAR_CODES.map(c=>`<option value="${c.code}" ${f.oscarCode===c.code?"selected":""}>${c.code} - ${c.desc}</option>`).join("")}</select>
+    ${f.clientId?`<div style="margin-top:6px;font-size:11px;color:var(--text4)">Códigos ya usados en este cliente: ${(()=>{const used=S.data.disputes.filter(d=>d.clientId===f.clientId&&d.oscarCode).map(d=>d.oscarCode);return[...new Set(used)].join(", ")||"Ninguno"})()}</div>`:""}</div>
+    <div class="fg"><label>📎 Carta de Disputa (PDF/Foto)</label>
+      <div class="upload-zone ${f.letterFile?"has-file":""}" onclick="uploadDisputeLetter()" style="padding:14px">
+        ${f.letterFile?`<p>✅ ${esc(f.letterFileName)} — Toca para cambiar</p>`:`<div class="uzi">📄</div><p>Subir carta de disputa (opcional)</p>`}
+      </div></div>
+    <div class="fg"><label>Fecha Envío</label><input type="date" value="${f.sentDate||new Date().toISOString().split('T')[0]}" oninput="setF('sentDate',this.value)"></div>
+    <div class="fg"><label>Fecha Recibida por Buró</label><input type="date" value="${f.receivedDate||""}" oninput="setF('receivedDate',this.value)"></div>
+    <div class="fg"><label>Guía / Tracking de Envío</label><input value="${esc(f.trackingNumber||"")}" oninput="setF('trackingNumber',this.value)" placeholder="No. de guía USPS, FedEx..."></div>
+    <div class="fg"><div class="check-row"><input type="checkbox" id="cfpb" ${f.usedCFPB?"checked":""} onchange="setF('usedCFPB',this.checked)"><label for="cfpb">Se usó CFPB</label></div></div>
+    <div class="fg"><div class="check-row"><input type="checkbox" id="ftc" ${f.reportedFTC?"checked":""} onchange="setF('reportedFTC',this.checked)"><label for="ftc">Se reportó al FTC</label></div></div>
+    <div class="fg"><label>Notas</label><textarea oninput="setF('notes',this.value)">${esc(f.notes||"")}</textarea></div>`;
+    action=`<button class="btn btn-p" style="width:100%;margin-top:12px" onclick="addDispute()">Registrar</button>`;
+  }
+  else if(m==="addNote"){
+    title="Nueva Nota";
+    fields=`<div class="fg"><label>Título</label><input value="${esc(f.title||"")}" oninput="setF('title',this.value)"></div>
+    <div class="fg"><label>Nota <span class="req">*</span></label><textarea oninput="setF('text',this.value)">${esc(f.text||"")}</textarea></div>`;
+    action=`<button class="btn btn-p" style="width:100%;margin-top:12px" onclick="addNote()">Guardar</button>`;
+  }
+  else if(m==="manageSources"){
+    title="Gestionar Fuentes";
+    fields=`<p style="font-size:13px;color:var(--text3);margin-bottom:14px">Empresas o personas que te refieren clientes</p>
+    ${sources.map(s=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
+      <span style="flex:1;font-size:14px">${esc(s)}</span>
+      ${s!=="FIGA Directo"?`<button class="btn-del" onclick="removeSource('${esc(s)}');closeModal()">🗑</button>`:""}</div>`).join("")}
+    <button class="btn btn-s" style="width:100%;margin-top:14px" onclick="addSource()">＋ Agregar Fuente</button>`;
+    action="";
+  }
+  if(!title)return;
+  const ov=document.createElement("div");ov.className="overlay";
+  ov.onclick=e=>{if(e.target===ov)closeModal()};
+  ov.innerHTML=`<div class="modal"><div class="modal-h"><h3 class="modal-t">${title}</h3><button class="close-btn" onclick="closeModal()">✕</button></div>${fields}${action}</div>`;
+  document.body.appendChild(ov);
+}
+
+load();render();
+</script>
+</body>
+</html>
